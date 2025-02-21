@@ -26,7 +26,7 @@
         #display {
             width: 100%;
             height: 60px;
-            text-align: right;
+            text-align: left;
             font-size: 1.8em;
             padding: 10px;
             border: none;
@@ -35,7 +35,6 @@
             margin-bottom: 10px;
             overflow-x: auto;
             white-space: nowrap;
-            direction: rtl;
         }
 
         .buttons {
@@ -90,20 +89,20 @@
         <div class="buttons">
             <button onclick="clearDisplay()">C</button>
             <button onclick="deleteLast()">⌫</button>
-            <button onclick="appendValue('%')">%</button>
-            <button onclick="appendValue('/')">/</button>
+            <button onclick="appendOperator('%')">%</button>
+            <button onclick="appendOperator('/')">/</button>
             <button onclick="appendValue('7')">7</button>
             <button onclick="appendValue('8')">8</button>
             <button onclick="appendValue('9')">9</button>
-            <button onclick="appendValue('*')">*</button>
+            <button onclick="appendOperator('*')">*</button>
             <button onclick="appendValue('4')">4</button>
             <button onclick="appendValue('5')">5</button>
             <button onclick="appendValue('6')">6</button>
-            <button onclick="appendValue('-')">-</button>
+            <button onclick="appendOperator('-')">-</button>
             <button onclick="appendValue('1')">1</button>
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
-            <button onclick="appendValue('+')">+</button>
+            <button onclick="appendOperator('+')">+</button>
             <button onclick="toggleScientific()">Sci</button>
             <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
@@ -126,34 +125,54 @@
     <script>
         let display = document.getElementById("display");
         let scientificMode = false;
+        let expression = [];
+        let lastOperator = null;
 
         function appendValue(value) {
-            let lastChar = display.value.slice(-1);
-            let isOperator = /[+\-*/%]/.test(lastChar);
-            let newIsOperator = /[+\-*/%]/.test(value);
-            
-            if (newIsOperator && display.value.length > 0) {
-                display.value = display.value.slice(0, -1) + value;
+            if (lastOperator !== null) {
+                expression.push(value);
+                expression.push(lastOperator);
+                lastOperator = null;
             } else {
-                display.value += value;
+                expression.push(value);
             }
-            scrollToEnd();
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (expression.length > 0) {
+                lastOperator = operator;
+            }
+        }
+
+        function updateDisplay() {
+            display.value = expression.join(' ');
+            display.scrollLeft = display.scrollWidth;
         }
 
         function clearDisplay() {
-            display.value = "";
+            expression = [];
+            lastOperator = null;
+            updateDisplay();
         }
 
         function deleteLast() {
-            display.value = display.value.slice(0, -1);
+            if (expression.length > 0) {
+                expression.pop();
+            } else {
+                lastOperator = null;
+            }
+            updateDisplay();
         }
 
         function calculateResult() {
             try {
-                display.value = eval(display.value);
-                scrollToEnd();
+                let postfixExpression = expression.join(' ');
+                display.value = eval(postfixExpression.replace(/ /g, ''));
+                expression = [display.value];
             } catch {
                 display.value = "Error";
+                expression = [];
             }
         }
 
@@ -161,10 +180,6 @@
             let sciButtons = document.getElementById("scientific");
             scientificMode = !scientificMode;
             sciButtons.style.display = scientificMode ? "grid" : "none";
-        }
-
-        function scrollToEnd() {
-            display.scrollLeft = display.scrollWidth;
         }
     </script>
 </body>
