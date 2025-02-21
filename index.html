@@ -88,6 +88,41 @@
             font-size: 0.9em;
             color: #555;
         }
+
+        .game-popup, .equation-popup {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            padding: 20px;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .game-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .game-popup button, .equation-popup button {
+            background-color: #f39c12;
+            color: white;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .game-popup button:hover, .equation-popup button:hover {
+            background-color: #e67e22;
+        }
     </style>
 </head>
 <body>
@@ -116,27 +151,41 @@
             <button onclick="calculateResult()" class="equal">=</button>
         </div>
 
-        <div class="scientific-buttons" id="scientific">
-            <button onclick="appendValue('Math.sin(')">sin</button>
-            <button onclick="appendValue('Math.cos(')">cos</button>
-            <button onclick="appendValue('Math.tan(')">tan</button>
-            <button onclick="appendValue('Math.log(')">log</button>
-            <button onclick="appendValue('Math.exp(')">exp</button>
-            <button onclick="appendValue('Math.sqrt(')">√</button>
-            <button onclick="appendValue('(')">(</button>
-            <button onclick="appendValue(')')">)</button>
-            <button onclick="appendValue('**')">xⁿ</button>
+        <button onclick="openGame()">Play Guess the Number Game</button>
+        <button onclick="openEquationGame()">Play Solve the Equation Game</button>
+
+        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
+    </div>
+
+    <!-- Guess the Number Game Popup -->
+    <div id="gamePopup" class="game-popup">
+        <div class="game-container">
+            <h2>Guess the Number Game - Level <span id="level">1</span></h2>
+            <p>Guess the number between 1 and <span id="maxNumber">100</span></p>
+            <input type="number" id="userGuess" placeholder="Enter your guess">
+            <button onclick="checkGuess()">Submit Guess</button>
+            <p id="gameMessage"></p>
+            <button onclick="closeGame()">Close Game</button>
         </div>
     </div>
 
-
-        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
-            
+    <!-- Solve the Equation Game Popup -->
+    <div id="equationPopup" class="equation-popup">
+        <div class="game-container">
+            <h2>Solve the Equation - Level <span id="equationLevel">1</span></h2>
+            <p id="equationQuestion"></p>
+            <input type="number" id="userAnswer" placeholder="Enter your answer">
+            <button onclick="checkEquationAnswer()">Submit Answer</button>
+            <p id="equationMessage"></p>
+            <button onclick="closeEquationGame()">Close Game</button>
+        </div>
+    </div>
 
     <script>
         let display = document.getElementById("display");
         let expression = [];
 
+        // Calculator functions
         function appendValue(value) {
             expression.push(value);
             updateDisplay();
@@ -181,6 +230,87 @@
         function toggleScientific() {
             let sciButtons = document.getElementById("scientific");
             sciButtons.style.display = sciButtons.style.display === "grid" ? "none" : "grid";
+        }
+
+        // Guess the Number Game
+        let currentLevel = 1;
+        let maxLevel = 100;
+        let randomNumber;
+        let attempts = 0;
+
+        function openGame() {
+            document.getElementById('gamePopup').style.display = 'block';
+            generateRandomNumber();
+        }
+
+        function closeGame() {
+            document.getElementById('gamePopup').style.display = 'none';
+            currentLevel = 1;
+            attempts = 0;
+        }
+
+        function generateRandomNumber() {
+            randomNumber = Math.floor(Math.random() * (currentLevel * 10)) + 1;
+            document.getElementById('maxNumber').textContent = currentLevel * 10;
+            document.getElementById('level').textContent = currentLevel;
+            document.getElementById('gameMessage').textContent = '';
+        }
+
+        function checkGuess() {
+            let userGuess = parseInt(document.getElementById('userGuess').value);
+            if (userGuess === randomNumber) {
+                attempts++;
+                if (currentLevel < maxLevel) {
+                    currentLevel++;
+                    generateRandomNumber();
+                } else {
+                    document.getElementById('gameMessage').textContent = `Congrats! You've completed all ${maxLevel} levels!`;
+                }
+            } else {
+                attempts++;
+                document.getElementById('gameMessage').textContent = `Wrong guess! Try again.`;
+            }
+        }
+
+        // Solve the Equation Game
+        let equationLevel = 1;
+        let maxEquationLevel = 50;
+        let currentEquation;
+
+        function openEquationGame() {
+            document.getElementById('equationPopup').style.display = 'block';
+            generateEquation();
+        }
+
+        function closeEquationGame() {
+            document.getElementById('equationPopup').style.display = 'none';
+            equationLevel = 1;
+        }
+
+        function generateEquation() {
+            let num1 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
+            let num2 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
+            let operators = ['+', '-', '*', '/'];
+            let operator = operators[Math.floor(Math.random() * operators.length)];
+            currentEquation = `${num1} ${operator} ${num2}`;
+            document.getElementById('equationQuestion').textContent = currentEquation;
+            document.getElementById('equationLevel').textContent = equationLevel;
+            document.getElementById('equationMessage').textContent = '';
+        }
+
+        function checkEquationAnswer() {
+            let userAnswer = parseFloat(document.getElementById('userAnswer').value);
+            let correctAnswer = eval(currentEquation);
+            if (userAnswer === correctAnswer) {
+                if (equationLevel < maxEquationLevel) {
+                    equationLevel++;
+                    generateEquation();
+                } else {
+                    document.getElementById('equationMessage').textContent = `Congrats! You've solved all ${maxEquationLevel} levels!`;
+                }
+            } else {
+                document.getElementById('equationMessage').textContent = `Incorrect answer. Try again.`;
+            }
         }
     </script>
 </body>
