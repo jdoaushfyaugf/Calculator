@@ -94,7 +94,7 @@
             background-color: #e67e22;
         }
 
-        /* Popup styling for the games */
+        /* Game popups */
         .game-popup, .equation-popup {
             width: 100%;
             height: 100%;
@@ -130,6 +130,7 @@
         .game-popup button:hover, .equation-popup button:hover {
             background-color: #e67e22;
         }
+
     </style>
 </head>
 <body>
@@ -152,10 +153,12 @@
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
             <button onclick="appendOperator('+')">+</button>
+            <button onclick="toggleScientific()">Sci</button>
             <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
             <button onclick="calculateResult()" class="equal">=</button>
         </div>
+
         <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
     </div>
 
@@ -225,17 +228,25 @@
 
         function calculateResult() {
             try {
-                let result = eval(expression.join(' '));
+                // Join the expression and evaluate it safely
+                let finalExpression = expression.join('').replace(/ /g, '');
+                let result = new Function('return ' + finalExpression)();
                 display.value = result;
-                expression = [result];
+                expression = [result]; // Store result for further calculations
             } catch {
                 display.value = "Error";
                 expression = [];
             }
         }
 
-        // Game functions
+        function toggleScientific() {
+            let sciButtons = document.getElementById("scientific");
+            sciButtons.style.display = sciButtons.style.display === "grid" ? "none" : "grid";
+        }
+
+        // Guess the Number Game
         let currentLevel = 1;
+        let maxLevel = 100;
         let randomNumber;
         let attempts = 0;
 
@@ -261,20 +272,21 @@
             let userGuess = parseInt(document.getElementById('userGuess').value);
             if (userGuess === randomNumber) {
                 attempts++;
-                if (currentLevel < 10) {
+                if (currentLevel < maxLevel) {
                     currentLevel++;
                     generateRandomNumber();
                 } else {
-                    document.getElementById('gameMessage').textContent = `Congrats! You've completed all levels!`;
+                    document.getElementById('gameMessage').textContent = "Congrats! You've completed all levels!";
                 }
             } else {
                 attempts++;
-                document.getElementById('gameMessage').textContent = `Wrong guess! Try again.`;
+                document.getElementById('gameMessage').textContent = "Wrong guess! Try again.";
             }
         }
 
-        // Solve the Equation Game functions
+        // Solve the Equation Game
         let equationLevel = 1;
+        let maxEquationLevel = 50;
         let currentEquation;
 
         function openEquationGame() {
@@ -302,16 +314,17 @@
             let userAnswer = parseFloat(document.getElementById('userAnswer').value);
             let correctAnswer = eval(currentEquation);
             if (userAnswer === correctAnswer) {
-                if (equationLevel < 10) {
+                if (equationLevel < maxEquationLevel) {
                     equationLevel++;
                     generateEquation();
                 } else {
-                    document.getElementById('equationMessage').textContent = `Congrats! You've solved all levels!`;
+                    document.getElementById('equationMessage').textContent = "Congrats! You've solved all levels!";
                 }
             } else {
-                document.getElementById('equationMessage').textContent = `Wrong answer! Try again.`;
+                document.getElementById('equationMessage').textContent = "Wrong answer! Try again.";
             }
         }
+
     </script>
 </body>
 </html>
