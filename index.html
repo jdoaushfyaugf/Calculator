@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-9">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
+    <title>Advanced Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,29 +13,34 @@
             height: 100vh;
             background-color: #f4f4f4;
         }
+
         .calculator {
-            width: 250px;
-            background: #7284c0;
+            width: 300px;
+            background: white;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
+
         #display {
             width: 100%;
-            height: 50px;
+            height: 60px;
             text-align: right;
-            font-size: 1.5em;
+            font-size: 1.8em;
             padding: 10px;
             border: none;
             background: #eee;
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 5px;
         }
+
         button {
             width: 100%;
             height: 50px;
@@ -45,19 +50,34 @@
             background: #ddd;
             border-radius: 5px;
         }
+
         button:hover {
             background: #bbb;
         }
+
         .equal {
             background: #f39c12;
             color: white;
         }
+
         .equal:hover {
             background: #e67e22;
         }
 
-        .body:hover {
-            background: #62beba
+        .scientific-buttons {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .scientific-buttons button {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .scientific-buttons button:hover {
+            background: #45a049;
         }
     </style>
 </head>
@@ -67,30 +87,47 @@
         <input type="text" id="display" disabled>
         <div class="buttons">
             <button onclick="clearDisplay()">C</button>
+            <button onclick="deleteLast()">⌫</button>
+            <button onclick="appendValue('%')">%</button>
             <button onclick="appendValue('/')">/</button>
-            <button onclick="appendValue('*')">*</button>
-            <button onclick="appendValue('-')">-</button>
 
             <button onclick="appendValue('7')">7</button>
             <button onclick="appendValue('8')">8</button>
             <button onclick="appendValue('9')">9</button>
-            <button onclick="appendValue('+')">+</button>
+            <button onclick="appendValue('*')">*</button>
 
             <button onclick="appendValue('4')">4</button>
             <button onclick="appendValue('5')">5</button>
             <button onclick="appendValue('6')">6</button>
-            <button onclick="calculateResult()" class="equal">=</button>
+            <button onclick="appendValue('-')">-</button>
 
             <button onclick="appendValue('1')">1</button>
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
-            <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
+            <button onclick="appendValue('+')">+</button>
+
+            <button onclick="toggleScientific()">Sci</button>
+            <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
+            <button onclick="calculateResult()" class="equal">=</button>
+        </div>
+
+        <div class="scientific-buttons" id="scientific">
+            <button onclick="appendValue('Math.sin(')">sin</button>
+            <button onclick="appendValue('Math.cos(')">cos</button>
+            <button onclick="appendValue('Math.tan(')">tan</button>
+            <button onclick="appendValue('Math.log(')">log</button>
+            <button onclick="appendValue('Math.exp(')">exp</button>
+            <button onclick="appendValue('Math.sqrt(')">√</button>
+            <button onclick="appendValue('(')">(</button>
+            <button onclick="appendValue(')')">)</button>
+            <button onclick="appendValue('**')">xⁿ</button>
         </div>
     </div>
 
     <script>
         let display = document.getElementById("display");
+        let scientificMode = false;
 
         function appendValue(value) {
             display.value += value;
@@ -100,14 +137,23 @@
             display.value = "";
         }
 
-        function calculateResult() {
-    try {
-        display.value = (Math.round(eval(display.value) * 10) / 10).toFixed(1);
-    } catch {
-        display.value = "Error";
-    }
-}
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
 
+        function calculateResult() {
+            try {
+                display.value = eval(display.value);
+            } catch {
+                display.value = "Error";
+            }
+        }
+
+        function toggleScientific() {
+            let sciButtons = document.getElementById("scientific");
+            scientificMode = !scientificMode;
+            sciButtons.style.display = scientificMode ? "grid" : "none";
+        }
     </script>
 
 </body>
