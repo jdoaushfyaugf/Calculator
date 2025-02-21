@@ -125,7 +125,7 @@
             background-color: #e67e22;
         }
 
-        /* Buttons on the side */
+        /* Buttons on the side (desktop version) */
         .side-buttons {
             position: fixed;
             top: 50%;
@@ -150,6 +150,51 @@
 
         .side-buttons button:hover {
             background-color: #e67e22;
+        }
+
+        /* Mobile Version - Using media queries */
+        @media (max-width: 600px) {
+            /* Move buttons to bottom */
+            .side-buttons {
+                position: fixed;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+                flex-direction: row;
+                justify-content: space-between;
+                width: 80%;
+                gap: 10px;
+            }
+
+            .side-buttons button {
+                width: 45%;
+                font-size: 1em;
+                padding: 10px;
+            }
+
+            /* Adjust the calculator layout */
+            .calculator {
+                width: 90%;
+                padding: 10px;
+                margin-bottom: 20px;
+            }
+
+            .buttons button {
+                font-size: 1em;
+                height: 45px;
+            }
+
+            /* Ensure that game popups do not occupy full height on small screens */
+            .game-popup, .equation-popup {
+                top: 20px;
+                bottom: 20px;
+                padding: 10px;
+            }
+
+            .game-popup button, .equation-popup button {
+                font-size: 1em;
+                padding: 6px 12px;
+            }
         }
 
     </style>
@@ -295,11 +340,11 @@
                     currentLevel++;
                     generateRandomNumber();
                 } else {
-                    document.getElementById('gameMessage').textContent = `Congrats! You've completed all ${maxLevel} levels!`;
+                    document.getElementById('gameMessage').textContent = Congrats! You've completed all ${maxLevel} levels!;
                 }
             } else {
                 attempts++;
-                document.getElementById('gameMessage').textContent = `Wrong guess! Try again.`;
+                document.getElementById('gameMessage').textContent = Wrong guess! Try again.;
             }
         }
 
@@ -323,7 +368,7 @@
             let num2 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
             let operators = ['+', '-', '*', '/'];
             let operator = operators[Math.floor(Math.random() * operators.length)];
-            currentEquation = `${num1} ${operator} ${num2}`;
+            currentEquation = ${num1} ${operator} ${num2};
             document.getElementById('equationQuestion').textContent = currentEquation;
             document.getElementById('equationLevel').textContent = equationLevel;
             document.getElementById('equationMessage').textContent = '';
@@ -337,10 +382,10 @@
                     equationLevel++;
                     generateEquation();
                 } else {
-                    document.getElementById('equationMessage').textContent = `Congrats! You've solved all ${maxEquationLevel} levels!`;
+                    document.getElementById('equationMessage').textContent = Congrats! You've solved all ${maxEquationLevel} levels!;
                 }
             } else {
-                document.getElementById('equationMessage').textContent = `Incorrect answer. Try again.`;
+                document.getElementById('equationMessage').textContent = document.getElementById('equationMessage').textContent = `Wrong answer! Try again.`;
             }
         }
     </script>
