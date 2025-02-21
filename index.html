@@ -261,11 +261,12 @@
         let display = document.getElementById("display");
         let expression = [];
 
-        // Calculator functions
-        function appendValue(value) {
-            expression.push(value);
-            updateDisplay();
-        }
+function appendValue(value) {
+    console.log(`Adding value: ${value}`);
+    expression.push(value);
+    updateDisplay();
+}
+
 
         function appendOperator(operator) {
             if (expression.length > 0) {
@@ -292,16 +293,17 @@
             updateDisplay();
         }
 
-        function calculateResult() {
-            try {
-                let postfixExpression = expression.join(' ');
-                display.value = eval(postfixExpression.replace(/ /g, ''));
-                expression = [display.value];
-            } catch {
-                display.value = "Error";
-                expression = [];
-            }
-        }
+function calculateResult() {
+    try {
+        let postfixExpression = expression.join(' ').replace(/\s+/g, ''); // Remove extra spaces
+        display.value = eval(postfixExpression); 
+        expression = [display.value]; // Reset expression after calculation
+    } catch {
+        display.value = "Error";
+        expression = [];
+    }
+}
+
 
         function toggleScientific() {
             let sciButtons = document.getElementById("scientific");
