@@ -8,11 +8,11 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f4f4f4;
+            position: relative;
         }
 
         .calculator {
@@ -114,15 +114,44 @@
         .game-popup button, .equation-popup button {
             background-color: #f39c12;
             color: white;
-            padding: 10px;
-            font-size: 1.2em;
+            padding: 8px 15px;
+            font-size: 1.1em;
             cursor: pointer;
             border-radius: 5px;
+            margin: 5px;
         }
 
         .game-popup button:hover, .equation-popup button:hover {
             background-color: #e67e22;
         }
+
+        /* Buttons on the side */
+        .side-buttons {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .side-buttons button {
+            width: 150px;
+            height: 50px;
+            font-size: 1.2em;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .side-buttons button:hover {
+            background-color: #e67e22;
+        }
+
     </style>
 </head>
 <body>
@@ -151,10 +180,12 @@
             <button onclick="calculateResult()" class="equal">=</button>
         </div>
 
+        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
+    </div>
+
+    <div class="side-buttons">
         <button onclick="openGame()">Play Guess the Number Game</button>
         <button onclick="openEquationGame()">Play Solve the Equation Game</button>
-
-        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
     </div>
 
     <!-- Guess the Number Game Popup -->
