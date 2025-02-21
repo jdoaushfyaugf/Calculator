@@ -67,28 +67,34 @@
             background: #e67e22;
         }
 
-        .scientific-buttons {
-            display: none;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin-top: 10px;
+        /* Buttons on the side (desktop version) */
+        .side-buttons {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
-        .scientific-buttons button {
-            background: #4CAF50;
+        .side-buttons button {
+            width: 150px;
+            height: 50px;
+            font-size: 1.2em;
+            background-color: #f39c12;
             color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        .scientific-buttons button:hover {
-            background: #45a049;
+        .side-buttons button:hover {
+            background-color: #e67e22;
         }
 
-        .credits {
-            margin-top: 15px;
-            font-size: 0.9em;
-            color: #555;
-        }
-
+        /* Popup styling for the games */
         .game-popup, .equation-popup {
             width: 100%;
             height: 100%;
@@ -124,79 +130,6 @@
         .game-popup button:hover, .equation-popup button:hover {
             background-color: #e67e22;
         }
-
-        /* Buttons on the side (desktop version) */
-        .side-buttons {
-            position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .side-buttons button {
-            width: 150px;
-            height: 50px;
-            font-size: 1.2em;
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .side-buttons button:hover {
-            background-color: #e67e22;
-        }
-
-        /* Mobile Version - Using media queries */
-        @media (max-width: 600px) {
-            /* Move buttons to bottom */
-            .side-buttons {
-                position: fixed;
-                bottom: 20px;
-                right: 50%;
-                transform: translateX(50%);
-                flex-direction: row;
-                justify-content: space-between;
-                width: 80%;
-                gap: 10px;
-            }
-
-            .side-buttons button {
-                width: 45%;
-                font-size: 1em;
-                padding: 10px;
-            }
-
-            /* Adjust the calculator layout */
-            .calculator {
-                width: 90%;
-                padding: 10px;
-                margin-bottom: 20px;
-            }
-
-            .buttons button {
-                font-size: 1em;
-                height: 45px;
-            }
-
-            /* Ensure that game popups do not occupy full height on small screens */
-            .game-popup, .equation-popup {
-                top: 20px;
-                bottom: 20px;
-                padding: 10px;
-            }
-
-            .game-popup button, .equation-popup button {
-                font-size: 1em;
-                padding: 6px 12px;
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -219,12 +152,10 @@
             <button onclick="appendValue('2')">2</button>
             <button onclick="appendValue('3')">3</button>
             <button onclick="appendOperator('+')">+</button>
-            <button onclick="toggleScientific()">Sci</button>
             <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
             <button onclick="calculateResult()" class="equal">=</button>
         </div>
-
         <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
     </div>
 
@@ -261,12 +192,11 @@
         let display = document.getElementById("display");
         let expression = [];
 
-function appendValue(value) {
-    console.log(`Adding value: ${value}`);
-    expression.push(value);
-    updateDisplay();
-}
-
+        // Calculator functions
+        function appendValue(value) {
+            expression.push(value);
+            updateDisplay();
+        }
 
         function appendOperator(operator) {
             if (expression.length > 0) {
@@ -293,26 +223,19 @@ function appendValue(value) {
             updateDisplay();
         }
 
-function calculateResult() {
-    try {
-        let postfixExpression = expression.join(' ').replace(/\s+/g, ''); // Remove extra spaces
-        display.value = eval(postfixExpression); 
-        expression = [display.value]; // Reset expression after calculation
-    } catch {
-        display.value = "Error";
-        expression = [];
-    }
-}
-
-
-        function toggleScientific() {
-            let sciButtons = document.getElementById("scientific");
-            sciButtons.style.display = sciButtons.style.display === "grid" ? "none" : "grid";
+        function calculateResult() {
+            try {
+                let result = eval(expression.join(' '));
+                display.value = result;
+                expression = [result];
+            } catch {
+                display.value = "Error";
+                expression = [];
+            }
         }
 
-        // Guess the Number Game
+        // Game functions
         let currentLevel = 1;
-        let maxLevel = 100;
         let randomNumber;
         let attempts = 0;
 
@@ -338,21 +261,20 @@ function calculateResult() {
             let userGuess = parseInt(document.getElementById('userGuess').value);
             if (userGuess === randomNumber) {
                 attempts++;
-                if (currentLevel < maxLevel) {
+                if (currentLevel < 10) {
                     currentLevel++;
                     generateRandomNumber();
                 } else {
-                    document.getElementById('gameMessage').textContent = Congrats! You've completed all ${maxLevel} levels!;
+                    document.getElementById('gameMessage').textContent = `Congrats! You've completed all levels!`;
                 }
             } else {
                 attempts++;
-                document.getElementById('gameMessage').textContent = Wrong guess! Try again.;
+                document.getElementById('gameMessage').textContent = `Wrong guess! Try again.`;
             }
         }
 
-        // Solve the Equation Game
+        // Solve the Equation Game functions
         let equationLevel = 1;
-        let maxEquationLevel = 50;
         let currentEquation;
 
         function openEquationGame() {
@@ -370,7 +292,7 @@ function calculateResult() {
             let num2 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
             let operators = ['+', '-', '*', '/'];
             let operator = operators[Math.floor(Math.random() * operators.length)];
-            currentEquation = ${num1} ${operator} ${num2};
+            currentEquation = `${num1} ${operator} ${num2}`;
             document.getElementById('equationQuestion').textContent = currentEquation;
             document.getElementById('equationLevel').textContent = equationLevel;
             document.getElementById('equationMessage').textContent = '';
@@ -380,14 +302,14 @@ function calculateResult() {
             let userAnswer = parseFloat(document.getElementById('userAnswer').value);
             let correctAnswer = eval(currentEquation);
             if (userAnswer === correctAnswer) {
-                if (equationLevel < maxEquationLevel) {
+                if (equationLevel < 10) {
                     equationLevel++;
                     generateEquation();
                 } else {
-                    document.getElementById('equationMessage').textContent = Congrats! You've solved all ${maxEquationLevel} levels!;
+                    document.getElementById('equationMessage').textContent = `Congrats! You've solved all levels!`;
                 }
             } else {
-                document.getElementById('equationMessage').textContent = document.getElementById('equationMessage').textContent = `Wrong answer! Try again.`;
+                document.getElementById('equationMessage').textContent = `Wrong answer! Try again.`;
             }
         }
     </script>
