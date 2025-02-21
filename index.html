@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -81,6 +82,12 @@
         .scientific-buttons button:hover {
             background: #45a049;
         }
+
+        .credits {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -122,27 +129,27 @@
         </div>
     </div>
 
+
+        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
+            
+
     <script>
         let display = document.getElementById("display");
-        let scientificMode = false;
         let expression = [];
-        let lastOperator = null;
 
         function appendValue(value) {
-            if (lastOperator !== null) {
-                expression.push(value);
-                expression.push(lastOperator);
-                lastOperator = null;
-            } else {
-                expression.push(value);
-            }
+            expression.push(value);
             updateDisplay();
         }
 
         function appendOperator(operator) {
             if (expression.length > 0) {
-                lastOperator = operator;
+                let lastElement = expression[expression.length - 1];
+                if (!isNaN(lastElement) || lastElement === ')') {
+                    expression.push(operator);
+                }
             }
+            updateDisplay();
         }
 
         function updateDisplay() {
@@ -152,16 +159,11 @@
 
         function clearDisplay() {
             expression = [];
-            lastOperator = null;
             updateDisplay();
         }
 
         function deleteLast() {
-            if (expression.length > 0) {
-                expression.pop();
-            } else {
-                lastOperator = null;
-            }
+            expression.pop();
             updateDisplay();
         }
 
@@ -178,8 +180,7 @@
 
         function toggleScientific() {
             let sciButtons = document.getElementById("scientific");
-            scientificMode = !scientificMode;
-            sciButtons.style.display = scientificMode ? "grid" : "none";
+            sciButtons.style.display = sciButtons.style.display === "grid" ? "none" : "grid";
         }
     </script>
 </body>
