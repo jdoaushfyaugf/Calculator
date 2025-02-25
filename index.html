@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Triage Dashboard</title>
+    <title>VM Management Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,6 +14,7 @@
 
         .container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             padding: 20px;
         }
@@ -25,6 +26,9 @@
             width: 30%;
             padding: 15px;
             margin: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .vm-panel h2 {
@@ -36,6 +40,7 @@
         .status {
             font-size: 18px;
             font-weight: bold;
+            text-align: center;
         }
 
         .status.running {
@@ -51,8 +56,9 @@
         }
 
         .action-buttons {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
-            text-align: center;
         }
 
         .action-buttons button {
@@ -109,33 +115,33 @@
 <body>
     <div class="container">
         <!-- Virtual Machines Panel -->
-        <div class="vm-panel">
+        <div class="vm-panel" id="vm1">
             <h2>VM 1</h2>
             <p class="status running">Status: Running</p>
             <div class="action-buttons">
-                <button>Start</button>
-                <button>Stop</button>
-                <button>Pause</button>
+                <button onclick="manageVM('vm1', 'start')">Start</button>
+                <button onclick="manageVM('vm1', 'stop')">Stop</button>
+                <button onclick="manageVM('vm1', 'pause')">Pause</button>
             </div>
         </div>
 
-        <div class="vm-panel">
+        <div class="vm-panel" id="vm2">
             <h2>VM 2</h2>
             <p class="status paused">Status: Paused</p>
             <div class="action-buttons">
-                <button>Start</button>
-                <button>Stop</button>
-                <button>Pause</button>
+                <button onclick="manageVM('vm2', 'start')">Start</button>
+                <button onclick="manageVM('vm2', 'stop')">Stop</button>
+                <button onclick="manageVM('vm2', 'pause')">Pause</button>
             </div>
         </div>
 
-        <div class="vm-panel">
+        <div class="vm-panel" id="vm3">
             <h2>VM 3</h2>
             <p class="status stopped">Status: Stopped</p>
             <div class="action-buttons">
-                <button>Start</button>
-                <button>Stop</button>
-                <button>Pause</button>
+                <button onclick="manageVM('vm3', 'start')">Start</button>
+                <button onclick="manageVM('vm3', 'stop')">Stop</button>
+                <button onclick="manageVM('vm3', 'pause')">Pause</button>
             </div>
         </div>
     </div>
@@ -155,5 +161,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Simulating VM state changes
+        function manageVM(vmId, action) {
+            const vmPanel = document.getElementById(vmId);
+            const statusElement = vmPanel.querySelector('.status');
+            
+            if (action === 'start') {
+                statusElement.textContent = 'Status: Running';
+                statusElement.classList.remove('paused', 'stopped');
+                statusElement.classList.add('running');
+            } else if (action === 'stop') {
+                statusElement.textContent = 'Status: Stopped';
+                statusElement.classList.remove('running', 'paused');
+                statusElement.classList.add('stopped');
+            } else if (action === 'pause') {
+                statusElement.textContent = 'Status: Paused';
+                statusElement.classList.remove('running', 'stopped');
+                statusElement.classList.add('paused');
+            }
+        }
+    </script>
 </body>
 </html>
