@@ -3,328 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Calculator</title>
+    <title>Triage Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            position: relative;
-        }
-
-        .calculator {
-            width: 300px;
-            background: #7284c0;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        #display {
-            width: 100%;
-            height: 60px;
-            text-align: left;
-            font-size: 1.8em;
-            padding: 10px;
-            border: none;
-            background: #eee;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-        }
-
-        button {
-            width: 100%;
-            height: 50px;
-            font-size: 1.2em;
-            border: none;
-            cursor: pointer;
-            background: #ddd;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background: #bbb;
-        }
-
-        .equal {
-            background: #f39c12;
-            color: white;
-        }
-
-        .equal:hover {
-            background: #e67e22;
-        }
-
-        /* Buttons on the side (desktop version) */
-        .side-buttons {
-            position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .side-buttons button {
-            width: 150px;
-            height: 50px;
-            font-size: 1.2em;
-            background-color: #f39c12;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .side-buttons button:hover {
-            background-color: #e67e22;
-        }
-
-        /* Game popups */
-        .game-popup, .equation-popup {
-            width: 100%;
-            height: 100%;
-            background-color: white;
+            justify-content: space-between;
             padding: 20px;
-            border: none;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 100;
-            overflow: hidden;
         }
 
-        .game-container {
-            margin: 20px auto;
+        .vm-panel {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            padding: 15px;
+            margin: 10px;
+        }
+
+        .vm-panel h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #3b3b3b;
+        }
+
+        .status {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status.running {
+            color: #4caf50; /* Green */
+        }
+
+        .status.stopped {
+            color: #f44336; /* Red */
+        }
+
+        .status.paused {
+            color: #ff9800; /* Orange */
+        }
+
+        .action-buttons {
+            margin-top: 20px;
             text-align: center;
         }
 
-        .game-popup button, .equation-popup button {
-            background-color: #f39c12;
+        .action-buttons button {
+            padding: 8px 16px;
+            background-color: #3f51b5;
             color: white;
-            padding: 8px 15px;
-            font-size: 1.1em;
-            cursor: pointer;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
             margin: 5px;
         }
 
-        .game-popup button:hover, .equation-popup button:hover {
-            background-color: #e67e22;
+        .action-buttons button:hover {
+            background-color: #303f9f;
         }
 
+        .alerts-panel {
+            background-color: #fff;
+            width: 30%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .alerts-panel h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #3b3b3b;
+        }
+
+        .alert {
+            background-color: #ffeb3b;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .alert.critical {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
+
+        .alert.info {
+            background-color: #2196f3; /* Blue */
+            color: white;
+        }
+
+        .alert.warning {
+            background-color: #ff9800; /* Orange */
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <input type="text" id="display" disabled>
-        <div class="buttons">
-            <button onclick="clearDisplay()">C</button>
-            <button onclick="deleteLast()">⌫</button>
-            <button onclick="appendOperator('%')">%</button>
-            <button onclick="appendOperator('/')">/</button>
-            <button onclick="appendValue('7')">7</button>
-            <button onclick="appendValue('8')">8</button>
-            <button onclick="appendValue('9')">9</button>
-            <button onclick="appendOperator('*')">*</button>
-            <button onclick="appendValue('4')">4</button>
-            <button onclick="appendValue('5')">5</button>
-            <button onclick="appendValue('6')">6</button>
-            <button onclick="appendOperator('-')">-</button>
-            <button onclick="appendValue('1')">1</button>
-            <button onclick="appendValue('2')">2</button>
-            <button onclick="appendValue('3')">3</button>
-            <button onclick="appendOperator('+')">+</button>
-            <button onclick="toggleScientific()">Sci</button>
-            <button onclick="appendValue('0')">0</button>
-            <button onclick="appendValue('.')">.</button>
-            <button onclick="calculateResult()" class="equal">=</button>
+    <div class="container">
+        <!-- Virtual Machines Panel -->
+        <div class="vm-panel">
+            <h2>VM 1</h2>
+            <p class="status running">Status: Running</p>
+            <div class="action-buttons">
+                <button>Start</button>
+                <button>Stop</button>
+                <button>Pause</button>
+            </div>
         </div>
 
-        <div class="credits"><b>Made by: justme_same_as_always on discord.</b></div>
-    </div>
+        <div class="vm-panel">
+            <h2>VM 2</h2>
+            <p class="status paused">Status: Paused</p>
+            <div class="action-buttons">
+                <button>Start</button>
+                <button>Stop</button>
+                <button>Pause</button>
+            </div>
+        </div>
 
-    <div class="side-buttons">
-        <button onclick="openGame()">Play Guess the Number Game</button>
-        <button onclick="openEquationGame()">Play Solve the Equation Game</button>
-    </div>
-
-    <!-- Guess the Number Game Popup -->
-    <div id="gamePopup" class="game-popup">
-        <div class="game-container">
-            <h2>Guess the Number Game - Level <span id="level">1</span></h2>
-            <p>Guess the number between 1 and <span id="maxNumber">100</span></p>
-            <input type="number" id="userGuess" placeholder="Enter your guess">
-            <button onclick="checkGuess()">Submit Guess</button>
-            <p id="gameMessage"></p>
-            <button onclick="closeGame()">Close Game</button>
+        <div class="vm-panel">
+            <h2>VM 3</h2>
+            <p class="status stopped">Status: Stopped</p>
+            <div class="action-buttons">
+                <button>Start</button>
+                <button>Stop</button>
+                <button>Pause</button>
+            </div>
         </div>
     </div>
 
-    <!-- Solve the Equation Game Popup -->
-    <div id="equationPopup" class="equation-popup">
-        <div class="game-container">
-            <h2>Solve the Equation - Level <span id="equationLevel">1</span></h2>
-            <p id="equationQuestion"></p>
-            <input type="number" id="userAnswer" placeholder="Enter your answer">
-            <button onclick="checkEquationAnswer()">Submit Answer</button>
-            <p id="equationMessage"></p>
-            <button onclick="closeEquationGame()">Close Game</button>
+    <div class="container">
+        <!-- Alerts Panel -->
+        <div class="alerts-panel">
+            <h2>Alerts</h2>
+            <div class="alert critical">
+                <strong>Critical:</strong> VM 1 has high CPU usage.
+            </div>
+            <div class="alert warning">
+                <strong>Warning:</strong> VM 3 is running out of disk space.
+            </div>
+            <div class="alert info">
+                <strong>Info:</strong> VM 2 is paused and requires manual intervention.
+            </div>
         </div>
     </div>
-
-    <script>
-        let display = document.getElementById("display");
-        let expression = [];
-
-        // Calculator functions
-        function appendValue(value) {
-            expression.push(value);
-            updateDisplay();
-        }
-
-        function appendOperator(operator) {
-            if (expression.length > 0) {
-                let lastElement = expression[expression.length - 1];
-                if (!isNaN(lastElement) || lastElement === ')') {
-                    expression.push(operator);
-                }
-            }
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            display.value = expression.join(' ');
-            display.scrollLeft = display.scrollWidth;
-        }
-
-        function clearDisplay() {
-            expression = [];
-            updateDisplay();
-        }
-
-        function deleteLast() {
-            expression.pop();
-            updateDisplay();
-        }
-
-        function calculateResult() {
-            try {
-                // Join the expression and evaluate it safely
-                let finalExpression = expression.join('').replace(/ /g, '');
-                let result = new Function('return ' + finalExpression)();
-                display.value = result;
-                expression = [result]; // Store result for further calculations
-            } catch {
-                display.value = "Error";
-                expression = [];
-            }
-        }
-
-        function toggleScientific() {
-            let sciButtons = document.getElementById("scientific");
-            sciButtons.style.display = sciButtons.style.display === "grid" ? "none" : "grid";
-        }
-
-        // Guess the Number Game
-        let currentLevel = 1;
-        let maxLevel = 100;
-        let randomNumber;
-        let attempts = 0;
-
-        function openGame() {
-            document.getElementById('gamePopup').style.display = 'block';
-            generateRandomNumber();
-        }
-
-        function closeGame() {
-            document.getElementById('gamePopup').style.display = 'none';
-            currentLevel = 1;
-            attempts = 0;
-        }
-
-        function generateRandomNumber() {
-            randomNumber = Math.floor(Math.random() * (currentLevel * 10)) + 1;
-            document.getElementById('maxNumber').textContent = currentLevel * 10;
-            document.getElementById('level').textContent = currentLevel;
-            document.getElementById('gameMessage').textContent = '';
-        }
-
-        function checkGuess() {
-            let userGuess = parseInt(document.getElementById('userGuess').value);
-            if (userGuess === randomNumber) {
-                attempts++;
-                if (currentLevel < maxLevel) {
-                    currentLevel++;
-                    generateRandomNumber();
-                } else {
-                    document.getElementById('gameMessage').textContent = "Congrats! You've completed all levels!";
-                }
-            } else {
-                attempts++;
-                document.getElementById('gameMessage').textContent = "Wrong guess! Try again.";
-            }
-        }
-
-        // Solve the Equation Game
-        let equationLevel = 1;
-        let maxEquationLevel = 50;
-        let currentEquation;
-
-        function openEquationGame() {
-            document.getElementById('equationPopup').style.display = 'block';
-            generateEquation();
-        }
-
-        function closeEquationGame() {
-            document.getElementById('equationPopup').style.display = 'none';
-            equationLevel = 1;
-        }
-
-        function generateEquation() {
-            let num1 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
-            let num2 = Math.floor(Math.random() * (equationLevel * 10)) + 1;
-            let operators = ['+', '-', '*', '/'];
-            let operator = operators[Math.floor(Math.random() * operators.length)];
-            currentEquation = `${num1} ${operator} ${num2}`;
-            document.getElementById('equationQuestion').textContent = currentEquation;
-            document.getElementById('equationLevel').textContent = equationLevel;
-            document.getElementById('equationMessage').textContent = '';
-        }
-
-        function checkEquationAnswer() {
-            let userAnswer = parseFloat(document.getElementById('userAnswer').value);
-            let correctAnswer = eval(currentEquation);
-            if (userAnswer === correctAnswer) {
-                if (equationLevel < maxEquationLevel) {
-                    equationLevel++;
-                    generateEquation();
-                } else {
-                    document.getElementById('equationMessage').textContent = "Congrats! You've solved all levels!";
-                }
-            } else {
-                document.getElementById('equationMessage').textContent = "Wrong answer! Try again.";
-            }
-        }
-
-    </script>
 </body>
 </html>
